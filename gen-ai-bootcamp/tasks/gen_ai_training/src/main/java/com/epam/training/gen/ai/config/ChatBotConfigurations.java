@@ -12,6 +12,7 @@ import com.microsoft.semantickernel.orchestration.ToolCallBehavior;
 import com.microsoft.semantickernel.plugin.KernelPlugin;
 import com.microsoft.semantickernel.plugin.KernelPluginFactory;
 import com.microsoft.semantickernel.services.chatcompletion.ChatCompletionService;
+import com.microsoft.semantickernel.services.chatcompletion.ChatHistory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -68,5 +69,10 @@ public class ChatBotConfigurations {
         .withReturnMode(InvocationReturnMode.LAST_MESSAGE_ONLY)
         .withToolCallBehavior(ToolCallBehavior.allowAllKernelFunctions(true))
         .build();
+  }
+
+  @Bean
+  public ChatHistory chatHistory() {
+    return new ChatHistory();
   }
 }
