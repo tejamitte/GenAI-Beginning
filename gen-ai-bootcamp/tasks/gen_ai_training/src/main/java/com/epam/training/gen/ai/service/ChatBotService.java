@@ -1,6 +1,6 @@
 package com.epam.training.gen.ai.service;
 
-import com.epam.training.gen.ai.model.ChatBotResponse;
+import com.epam.training.gen.ai.model.AIResponse;
 import com.epam.training.gen.ai.model.MobilePhones;
 import com.google.gson.Gson;
 import com.microsoft.semantickernel.Kernel;
@@ -24,7 +24,7 @@ public class ChatBotService {
   private final Kernel kernel;
   private final InvocationContext invocationContext;
 
-  public ChatBotResponse getChatBotResponse(String userPrompt, boolean integratePlugin) {
+  public AIResponse getChatBotResponse(String userPrompt, boolean integratePlugin) {
 
     ContextVariableTypes.addGlobalConverter(
         ContextVariableTypeConverter.builder(MobilePhones.class)
@@ -51,6 +51,6 @@ public class ChatBotService {
             .findFirst()
             .orElse("No Output, Something is wrong . . !");
 
-    return ChatBotResponse.builder().userPrompt(userPrompt).chatBotResponse(response).build();
+    return AIResponse.builder().userPrompt(userPrompt).aiResponse(response).build();
   }
 }
