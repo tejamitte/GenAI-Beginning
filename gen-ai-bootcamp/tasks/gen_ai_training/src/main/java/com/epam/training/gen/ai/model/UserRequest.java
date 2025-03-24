@@ -11,9 +11,10 @@ import java.util.List;
 @Getter
 @Builder
 @ToString
-public class Chat {
+public class UserRequest {
     private String prompt;
     private Double temperature;
     private int maxTokens;
+    private String deploymentName;
     private List<String> stopSequences;
 }

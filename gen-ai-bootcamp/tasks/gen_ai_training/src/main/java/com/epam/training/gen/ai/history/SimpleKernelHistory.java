@@ -1,7 +1,8 @@
 package com.epam.training.gen.ai.history;
 
-import com.epam.training.gen.ai.model.Chat;
-import com.epam.training.gen.ai.model.ChatBotResponse;
+import com.epam.training.gen.ai.config.ChatBotConfigurations;
+import com.epam.training.gen.ai.model.UserRequest;
+import com.epam.training.gen.ai.model.AIResponse;
 import com.microsoft.semantickernel.Kernel;
 import com.microsoft.semantickernel.orchestration.FunctionResult;
 import com.microsoft.semantickernel.orchestration.PromptExecutionSettings;
@@ -26,22 +27,31 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class SimpleKernelHistory {
+
+  private final ChatBotConfigurations chatBotConfigurations;
+
   private final Kernel kernel;
 
-  public ChatBotResponse processWithHistory(Chat chat) {
+  public AIResponse processWithHistory(UserRequest userRequest) {
 
     var chatHistory = new ChatHistory();
-    String prompt = Optional.ofNullable(chat.getPrompt()).orElseThrow();
+    String prompt = Optional.ofNullable(userRequest.getPrompt()).orElse("Hello!");
     var response =
         kernel
             .invokeAsync(getChat())
             .withArguments(getKernelFunctionArguments(prompt, chatHistory))
             .withPromptExecutionSettings(
                 PromptExecutionSettings.builder()
-                    .withTemperature(Optional.ofNullable(chat.getTemperature()).orElse(0D))
-                    .withMaxTokens(Optional.of(chat.getMaxTokens()).orElse(1000))
+                    .withTemperature(Optional.ofNullable(userRequest.getTemperature()).orElse(0.5D))
+                    .withMaxTokens(
+                        Optional.of(userRequest.getMaxTokens())
+                            .filter(tokenValue -> tokenValue != 0)
+                            .orElse(1000))
                     .withStopSequences(
-                        Optional.ofNullable(chat.getStopSequences()).orElse(List.of()))
+                        Optional.ofNullable(userRequest.getStopSequences()).orElse(List.of()))
+                    .withModelId(
+                        Optional.ofNullable(userRequest.getDeploymentName())
+                            .orElse(chatBotConfigurations.getDeploymentName()))
                     .build())
             .block();
     String result =
@@ -53,7 +63,7 @@ public class SimpleKernelHistory {
         "I know about you that your name is Teja Mitte and you're a java developer.");
     chatHistory.forEach(chatMessageContent -> log.info(chatMessageContent.getContent()));
     log.info("AI answer : {}", result);
-    return ChatBotResponse.builder().userPrompt(prompt).chatBotResponse(result).build();
+    return AIResponse.builder().userPrompt(prompt).aiResponse(result).build();
   }
 
   /**

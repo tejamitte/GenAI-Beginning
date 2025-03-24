@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class ChatBotResponse {
+public class AIResponse {
   private String userPrompt;
-  private String chatBotResponse;
+  private String aiResponse;
 }
