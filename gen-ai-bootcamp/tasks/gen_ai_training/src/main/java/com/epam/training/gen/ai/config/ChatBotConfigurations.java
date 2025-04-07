@@ -12,17 +12,13 @@ import com.microsoft.semantickernel.orchestration.ToolCallBehavior;
 import com.microsoft.semantickernel.plugin.KernelPlugin;
 import com.microsoft.semantickernel.plugin.KernelPluginFactory;
 import com.microsoft.semantickernel.services.chatcompletion.ChatCompletionService;
-import lombok.Getter;
+import com.microsoft.semantickernel.services.chatcompletion.ChatHistory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 @Configuration
-@Getter
 public class ChatBotConfigurations {
 
   @Value("${client-azureopenai-key}")
@@ -32,9 +28,7 @@ public class ChatBotConfigurations {
   private String CLIENT_ENDPOINT;
 
   @Value("${client-azureopenai-deployment-name}")
-  private String deploymentName;
-
-  public static final String API_KEY = "Api-Key";
+  private String DEPLOYMENT_NAME;
 
   @Bean
   @Primary
@@ -48,7 +42,7 @@ public class ChatBotConfigurations {
   @Bean
   public ChatCompletionService chatCompletionService() {
     return OpenAIChatCompletion.builder()
-        .withModelId(deploymentName)
+        .withModelId(DEPLOYMENT_NAME)
         .withOpenAIAsyncClient(openAIAsyncClient())
         .build();
   }
@@ -78,14 +72,7 @@ public class ChatBotConfigurations {
   }
 
   @Bean
-  public RestTemplate restTemplate() {
-    RestTemplate restTemplate = new RestTemplate();
-    restTemplate.setInterceptors(
-        List.of(
-            (request, body, execution) -> {
-              request.getHeaders().set(API_KEY, AZURE_CLIENT_KEY);
-              return execution.execute(request, body);
-            }));
-    return restTemplate;
+  public ChatHistory chatHistory() {
+    return new ChatHistory();
   }
 }
