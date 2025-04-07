@@ -1,7 +1,8 @@
 package com.epam.training.gen.ai.history;
 
-import com.epam.training.gen.ai.model.Chat;
-import com.epam.training.gen.ai.model.ChatBotResponse;
+import com.epam.training.gen.ai.config.ChatBotConfigurations;
+import com.epam.training.gen.ai.model.AIResponse;
+import com.epam.training.gen.ai.model.UserRequest;
 import com.microsoft.semantickernel.Kernel;
 import com.microsoft.semantickernel.orchestration.FunctionResult;
 import com.microsoft.semantickernel.orchestration.PromptExecutionSettings;
@@ -29,10 +30,11 @@ import java.util.stream.Collectors;
 public class SimpleKernelHistory {
   private final Kernel kernel;
   private final ChatHistory chatHistory;
+  private final ChatBotConfigurations chatBotConfigurations;
 
-  public ChatBotResponse processWithHistory(Chat chat) {
+  public AIResponse processWithHistory(UserRequest userRequest) {
 
-    String prompt = Optional.ofNullable(chat.getPrompt()).orElseThrow();
+    String prompt = Optional.ofNullable(userRequest.getPrompt()).orElseThrow();
     chatHistory.addUserMessage(prompt);
     var response =
         kernel
@@ -40,22 +42,22 @@ public class SimpleKernelHistory {
             .withArguments(getKernelFunctionArguments(prompt, chatHistory))
             .withPromptExecutionSettings(
                 PromptExecutionSettings.builder()
-                    .withTemperature(Optional.ofNullable(chat.getTemperature()).orElse(0.5D))
+                    .withTemperature(Optional.ofNullable(userRequest.getTemperature()).orElse(0.5D))
                     .withMaxTokens(
-                        Optional.of(chat.getMaxTokens())
+                        Optional.of(userRequest.getMaxTokens())
                             .filter(tokenValue -> tokenValue != 0)
                             .orElse(1000))
                     .withStopSequences(
-                        Optional.ofNullable(chat.getStopSequences()).orElse(List.of()))
+                        Optional.ofNullable(userRequest.getStopSequences()).orElse(List.of()))
+                    .withModelId(
+                        Optional.ofNullable(userRequest.getDeploymentName())
+                            .orElse(chatBotConfigurations.getDeploymentName()))
                     .build())
             .block();
     String result =
         Optional.ofNullable(response).map(FunctionResult::getResult).orElse("No Response..!");
     chatHistory.addAssistantMessage(result);
-    return ChatBotResponse.builder()
-        .userPrompt(prompt)
-        .chatBotResponse(getBotResponse(chatHistory))
-        .build();
+    return AIResponse.builder().userPrompt(prompt).aiResponse(getBotResponse(chatHistory)).build();
   }
 
   public String getBotResponse(ChatHistory chatHistory) {
@@ -82,8 +84,8 @@ public class SimpleKernelHistory {
   private KernelFunction<String> getChat() {
     return KernelFunction.<String>createFromPrompt(
             """
-                        {{$chatHistory}}
-                        <message role="user">{{$request}}</message>""")
+                                {{$chatHistory}}
+                                <message role="user">{{$request}}</message>""")
         .build();
   }
 
