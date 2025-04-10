@@ -1,6 +1,5 @@
 package com.epam.training.gen.ai.controller;
 
-import com.epam.training.gen.ai.history.SimpleKernelHistory;
 import com.epam.training.gen.ai.model.UserRequest;
 import com.epam.training.gen.ai.model.AIResponse;
 import com.epam.training.gen.ai.service.ChatBotService;
@@ -17,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ChatBotController {
   private final ChatBotService botService;
-  private final SimpleKernelHistory kernelHistory;
+  private final ChatBotService chatBotService;
   private final RestTemplate restTemplate;
 
   @Value("${epam.dial.deployment-names-api}")
@@ -25,26 +24,24 @@ public class ChatBotController {
 
   /**
    * @param userPrompt Input from the User
-   * @param integratePlugin To work with Mobile Phones plugin
    * @return Response of th eChatBot
    */
   @GetMapping(value = "/getResponse")
   public AIResponse getGeneratedResponse(
-      @RequestParam String userPrompt,
-      @RequestParam(value = "integratePlugin", required = false) Boolean integratePlugin) {
+      @RequestParam String userPrompt) {
 
     return Optional.ofNullable(botService)
         .map(
             chatBotService ->
                 chatBotService.getChatBotResponse(
-                    userPrompt, integratePlugin != null ? integratePlugin : false))
+                    userPrompt))
         .orElseGet(AIResponse::new);
   }
 
   @PostMapping(value = "/init-chat")
   public AIResponse getResponseFromHistory(@RequestBody UserRequest userRequest) {
-    return Optional.ofNullable(kernelHistory)
-        .map(kernelHistory -> kernelHistory.processWithHistory(userRequest))
+    return Optional.ofNullable(chatBotService)
+        .map(chatBotService -> chatBotService.processWithHistory(userRequest))
         .orElseGet(AIResponse::new);
   }
 

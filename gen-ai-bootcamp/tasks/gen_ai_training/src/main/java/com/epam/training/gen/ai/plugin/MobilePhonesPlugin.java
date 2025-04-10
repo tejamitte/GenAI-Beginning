@@ -1,4 +1,4 @@
-package com.epam.training.gen.ai.plugins;
+package com.epam.training.gen.ai.plugin;
 
 import com.epam.training.gen.ai.model.MobilePhones;
 import com.microsoft.semantickernel.semanticfunctions.annotations.DefineKernelFunction;
