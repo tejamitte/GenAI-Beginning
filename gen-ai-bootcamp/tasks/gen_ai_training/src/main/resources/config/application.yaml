@@ -7,3 +7,15 @@ client-azureopenai-deployment-name: ${AZURE_OPEN_AI_DEPLOYMENT_NAME}
 epam:
   dial:
     deployment-names-api: https://ai-proxy.lab.epam.com/openai/deployments
+
+vector:
+  collection:
+    name: app_embeddings
+model:
+  embedding:
+    name: text-embedding-ada-002
+    limit: 5
+qdrant:
+  host: localhost
+  port: 6334
+  useTls: false
