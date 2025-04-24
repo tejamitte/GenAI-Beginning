@@ -3,12 +3,16 @@ package com.epam.training.gen.ai.plugin;
 import com.epam.training.gen.ai.model.MobilePhones;
 import com.microsoft.semantickernel.semanticfunctions.annotations.DefineKernelFunction;
 import com.microsoft.semantickernel.semanticfunctions.annotations.KernelFunctionParameter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
+@Slf4j
 public class MobilePhonesPlugin {
 
   private final Map<Integer, MobilePhones> mobilePhones = new HashMap<>();
@@ -24,7 +28,7 @@ public class MobilePhonesPlugin {
       name = "get_mobile_phones",
       description = "Gets a list of mobile phones, availability and their starting price")
   public List<MobilePhones> getMobilePhones() {
-    System.out.println("Getting Mobile Phones");
+    log.info("Getting Mobile Phones");
     return new ArrayList<>(mobilePhones.values());
   }
 
@@ -38,7 +42,7 @@ public class MobilePhonesPlugin {
               name = "isAvailable",
               description = "The new state of the mobile phone")
           boolean isAvailable) {
-    System.out.println("Changing mobile phone " + id + " " + isAvailable);
+    log.info("Changing mobile phone {} {} ", id, isAvailable);
     if (!mobilePhones.containsKey(id)) {
       throw new IllegalArgumentException("Mobile Phone not found . . !");
     }
@@ -50,7 +54,7 @@ public class MobilePhonesPlugin {
   public List<MobilePhones> removeMobilePhone(
       @KernelFunctionParameter(name = "id", description = "The ID of the mobile phone to remove")
           int id) {
-    System.out.println("Removing Mobile Phones with ID " + id);
+    log.info("Removing Mobile Phones with ID {}", id);
     mobilePhones.remove(id);
     return new ArrayList<>(mobilePhones.values());
   }

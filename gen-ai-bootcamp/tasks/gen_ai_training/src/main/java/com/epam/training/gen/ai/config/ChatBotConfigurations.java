@@ -14,6 +14,7 @@ import com.microsoft.semantickernel.plugin.KernelPluginFactory;
 import com.microsoft.semantickernel.services.chatcompletion.ChatCompletionService;
 import com.microsoft.semantickernel.services.chatcompletion.ChatHistory;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +25,10 @@ import java.util.List;
 
 @Configuration
 @Getter
+@RequiredArgsConstructor
 public class ChatBotConfigurations {
+
+  private final MobilePhonesPlugin mobilePhonesPlugin;
 
   @Value("${client-azureopenai-key}")
   private String AZURE_CLIENT_KEY;
@@ -57,7 +61,8 @@ public class ChatBotConfigurations {
   // Mobile Phones Plugin
   @Bean
   public KernelPlugin kernelPlugin() {
-    return KernelPluginFactory.createFromObject(new MobilePhonesPlugin(), "MobilePhonesPlugin");
+    return KernelPluginFactory.createFromObject(
+        mobilePhonesPlugin, mobilePhonesPlugin.getClass().getSimpleName());
   }
 
   //  kernel with Azure OpenAI chat completion and plugin
