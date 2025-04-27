@@ -19,7 +19,7 @@ public class RAGController {
 
     private final RAGService ragService;
 
-    @GetMapping("/askRag")
+    @GetMapping("/docAssistant")
     public Mono<ResponseEntity<String>> ragResponse(@RequestParam String text){
     return ragService.getRagResponse(text).map(ResponseEntity::ok);
     }
