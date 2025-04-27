@@ -63,7 +63,7 @@ public class EmbeddingService {
         .getData();
   }
 
-  public List<String> searchEmbeddings(String input) {
+  public String searchEmbeddings(String input) {
     EmbeddingsOptions options = new EmbeddingsOptions(List.of(input));
     List<String> result = new ArrayList<>();
     Objects.requireNonNull(openAIAsyncClient.getEmbeddings(EMBEDDING_MODEL, options).block())
@@ -71,6 +71,6 @@ public class EmbeddingService {
         .forEach(
             embedding ->
                 result.addAll(vectorStorageService.search(embedding.getEmbedding(), LIMIT)));
-    return result;
+    return result.getFirst();
   }
 }
