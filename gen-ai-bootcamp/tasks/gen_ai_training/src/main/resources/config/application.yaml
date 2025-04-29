@@ -19,3 +19,8 @@ qdrant:
   host: localhost
   port: 6334
   useTls: false
+prompt-execution-settings:
+  temperature: 0.5
+  max-tokens: 100
+  stop-sequences:
+  model-id: gpt-4o-2024-05-13

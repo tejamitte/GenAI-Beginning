@@ -1,16 +1,15 @@
 package com.epam.training.gen.ai.controller;
 
-import com.epam.training.gen.ai.model.UserRequest;
 import com.epam.training.gen.ai.model.AIResponse;
+import com.epam.training.gen.ai.model.UserRequest;
 import com.epam.training.gen.ai.service.ChatBotService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +25,7 @@ public class ChatBotController {
    * @param userPrompt Input from the User
    * @return Response of th eChatBot
    */
-  @GetMapping(value = "/getResponse")
+  @GetMapping(value = "/chat")
   public AIResponse getGeneratedResponse(
       @RequestParam String userPrompt) {
 

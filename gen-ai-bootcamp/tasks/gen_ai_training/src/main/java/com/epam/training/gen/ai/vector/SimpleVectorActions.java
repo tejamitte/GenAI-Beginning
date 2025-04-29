@@ -1,5 +1,10 @@
 package com.epam.training.gen.ai.vector;
 
+import static io.qdrant.client.PointIdFactory.id;
+import static io.qdrant.client.ValueFactory.value;
+import static io.qdrant.client.VectorsFactory.vectors;
+import static io.qdrant.client.WithPayloadSelectorFactory.enable;
+
 import com.azure.ai.openai.OpenAIAsyncClient;
 import com.azure.ai.openai.models.EmbeddingItem;
 import com.azure.ai.openai.models.Embeddings;
@@ -10,21 +15,15 @@ import io.qdrant.client.grpc.Collections.VectorParams;
 import io.qdrant.client.grpc.Points.PointStruct;
 import io.qdrant.client.grpc.Points.ScoredPoint;
 import io.qdrant.client.grpc.Points.SearchPoints;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-
-import static io.qdrant.client.PointIdFactory.id;
-import static io.qdrant.client.ValueFactory.value;
-import static io.qdrant.client.VectorsFactory.vectors;
-import static io.qdrant.client.WithPayloadSelectorFactory.enable;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 /**
  * Service class for processing text into embeddings and interacting with Qdrant for vector storage

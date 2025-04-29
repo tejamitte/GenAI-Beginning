@@ -1,6 +1,7 @@
 package com.epam.training.gen.ai.service;
 
 import com.epam.training.gen.ai.config.ChatBotConfigurations;
+import com.epam.training.gen.ai.config.PromptExecutionSettingsConfig;
 import com.epam.training.gen.ai.model.AIResponse;
 import com.epam.training.gen.ai.model.MobilePhones;
 import com.epam.training.gen.ai.model.UserRequest;
@@ -17,12 +18,11 @@ import com.microsoft.semantickernel.services.chatcompletion.AuthorRole;
 import com.microsoft.semantickernel.services.chatcompletion.ChatCompletionService;
 import com.microsoft.semantickernel.services.chatcompletion.ChatHistory;
 import com.microsoft.semantickernel.services.chatcompletion.ChatMessageContent;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +32,7 @@ public class ChatBotService {
   private final InvocationContext invocationContext;
   private final ChatHistory chatHistory;
   private final ChatBotConfigurations chatBotConfigurations;
+  private final PromptExecutionSettingsConfig promptExecutionSettingsConfig;
 
   public AIResponse getChatBotResponse(String userPrompt) {
 
@@ -39,13 +40,12 @@ public class ChatBotService {
         ContextVariableTypeConverter.builder(MobilePhones.class)
             .toPromptString(new Gson()::toJson)
             .build());
-    ChatHistory history = new ChatHistory();
-    history.addUserMessage(userPrompt);
+    chatHistory.addUserMessage(userPrompt);
     List<ChatMessageContent<?>> results;
 
     results =
         chatCompletionService
-            .getChatMessageContentsAsync(history, kernel, invocationContext)
+            .getChatMessageContentsAsync(chatHistory, kernel, invocationContext)
             .block();
 
     String response =
@@ -71,13 +71,16 @@ public class ChatBotService {
             .withArguments(getKernelFunctionArguments(prompt, chatHistory))
             .withPromptExecutionSettings(
                 PromptExecutionSettings.builder()
-                    .withTemperature(Optional.ofNullable(userRequest.getTemperature()).orElse(0.5D))
+                    .withTemperature(
+                        Optional.ofNullable(userRequest.getTemperature())
+                            .orElse(promptExecutionSettingsConfig.getTemperature()))
                     .withMaxTokens(
                         Optional.of(userRequest.getMaxTokens())
                             .filter(tokenValue -> tokenValue != 0)
-                            .orElse(1000))
+                            .orElse(promptExecutionSettingsConfig.getMaxTokens()))
                     .withStopSequences(
-                        Optional.ofNullable(userRequest.getStopSequences()).orElse(List.of()))
+                        Optional.ofNullable(userRequest.getStopSequences())
+                            .orElse(promptExecutionSettingsConfig.getStopSequences()))
                     .withModelId(
                         Optional.ofNullable(userRequest.getDeploymentName())
                             .orElse(chatBotConfigurations.getDeploymentName()))

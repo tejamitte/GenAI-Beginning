@@ -4,15 +4,15 @@ import com.azure.ai.openai.OpenAIAsyncClient;
 import com.azure.ai.openai.models.EmbeddingItem;
 import com.azure.ai.openai.models.EmbeddingsOptions;
 import com.epam.training.gen.ai.util.TextChunker;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor

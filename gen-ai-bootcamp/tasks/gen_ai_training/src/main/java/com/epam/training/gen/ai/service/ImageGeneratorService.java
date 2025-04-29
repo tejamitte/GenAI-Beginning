@@ -7,10 +7,9 @@ import com.azure.ai.openai.models.ImageGenerations;
 import com.epam.training.gen.ai.config.ChatBotConfigurations;
 import com.epam.training.gen.ai.model.AIResponse;
 import com.epam.training.gen.ai.model.UserRequest;
+import java.util.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 /** Sample demonstrates how to get the images for a given prompt. */
 @Service
