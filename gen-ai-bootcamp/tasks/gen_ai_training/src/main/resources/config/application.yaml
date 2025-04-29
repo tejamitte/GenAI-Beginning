@@ -14,7 +14,7 @@ vector:
 model:
   embedding:
     name: text-embedding-ada-002
-    limit: 5
+    limit: 10
 qdrant:
   host: localhost
   port: 6334
